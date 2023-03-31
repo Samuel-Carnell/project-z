@@ -1,0 +1,119 @@
+{
+	"name": "frontend",
+	"version": "0.1.0",
+	"private": true,
+	"dependencies": {
+		"@chakra-ui/react": "^2.5.5",
+		"@emotion/react": "^11.10.6",
+		"@emotion/styled": "^11.10.6",
+		"@types/react": "^18.0.31",
+		"@types/react-dom": "^18.0.11",
+		"framer-motion": "^10.10.0",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0"
+	},
+	"devDependencies": {
+		"@testing-library/jest-dom": "^5.16.5",
+		"@testing-library/react": "^13.4.0",
+		"@testing-library/user-event": "^13.5.0",
+		"@types/jest": "^27.5.2",
+		"@types/node": "^16.18.23",
+		"eslint-plugin-import": "^2.27.5",
+		"prettier": "2.8.7",
+		"react-scripts": "5.0.1",
+		"serve": "^14.2.0",
+		"typescript": "^4.9.5"
+	},
+	"scripts": {
+		"start": "react-scripts start",
+		"start-prod": "react-scripts build && serve -s build",
+		"build": "react-scripts build",
+		"test": "react-scripts test",
+		"test-coverage": "react-scripts test --coverage --watchAll=false",
+		"lint": "npm run eslint:check; npm run prettier:check",
+		"eslint:check": "eslint ./src --ext .js,.jsx,.ts,.tsx",
+		"eslint:fix": "eslint ./src --ext .js,.jsx,.ts,.tsx --fix",
+		"prettier:check": "prettier src/**/*.{ts,tsx,html,json,md,js} -c",
+		"prettier:fix": "npx prettier src/**/*.{ts,tsx,html,json,md,js} -c --write"
+	},
+	"eslintConfig": {
+		"extends": [
+			"react-app",
+			"react-app/jest"
+		],
+		"overrides": [
+			{
+				"files": [
+					"*.js",
+					"*.jsx",
+					"*.ts",
+					"*.tsx"
+				],
+				"rules": {
+					"import/order": [
+						"warn",
+						{
+							"groups": [
+								"external",
+								"builtin",
+								"internal",
+								"parent",
+								"index",
+								"sibling"
+							],
+							"pathGroups": [
+								{
+									"pattern": "react",
+									"group": "external",
+									"position": "before"
+								}
+							],
+							"pathGroupsExcludedImportTypes": [
+								"internal"
+							],
+							"warnOnUnassignedImports": true,
+							"alphabetize": {
+								"order": "asc",
+								"caseInsensitive": true
+							}
+						}
+					],
+					"no-duplicate-imports": [
+						"error",
+						{
+							"includeExports": true
+						}
+					],
+					"sort-imports": [
+						"error",
+						{
+							"ignoreCase": true,
+							"ignoreDeclarationSort": true
+						}
+					]
+				}
+			}
+		]
+	},
+	"prettier": {
+		"endOfLine": "lf",
+		"singleQuote": false,
+		"useTabs": true,
+		"semi": true,
+		"printWidth": 120,
+		"arrowParens": "avoid",
+		"trailingComma": "none"
+	},
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
+	}
+}
