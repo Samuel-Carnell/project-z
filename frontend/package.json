@@ -15,16 +15,28 @@
 		"react-icons": "^4.8.0"
 	},
 	"devDependencies": {
+		"@storybook/addon-essentials": "^7.0.9",
+		"@storybook/addon-interactions": "^7.0.9",
+		"@storybook/addon-links": "^7.0.9",
+		"@storybook/blocks": "^7.0.9",
+		"@storybook/preset-create-react-app": "^7.0.9",
+		"@storybook/react": "^7.0.9",
+		"@storybook/react-webpack5": "^7.0.9",
+		"@storybook/testing-library": "^0.0.14-next.2",
 		"@testing-library/jest-dom": "^5.16.5",
 		"@testing-library/react": "^13.4.0",
 		"@testing-library/user-event": "^13.5.0",
 		"@types/jest": "^27.5.2",
 		"@types/node": "^16.18.23",
+		"babel-plugin-named-exports-order": "^0.0.2",
 		"eslint-plugin-import": "^2.27.5",
 		"prettier": "2.8.7",
+		"prop-types": "^15.8.1",
 		"react-scripts": "5.0.1",
 		"serve": "^14.2.0",
-		"typescript": "^4.9.5"
+		"storybook": "^7.0.9",
+		"typescript": "^4.9.5",
+		"webpack": "^5.82.0"
 	},
 	"scripts": {
 		"start": "react-scripts start",
@@ -36,7 +48,9 @@
 		"eslint:check": "eslint ./src --ext .js,.jsx,.ts,.tsx",
 		"eslint:fix": "eslint ./src --ext .js,.jsx,.ts,.tsx --fix",
 		"prettier:check": "prettier src/**/*.{ts,tsx,html,json,md,js} -c",
-		"prettier:fix": "npx prettier src/**/*.{ts,tsx,html,json,md,js} -c --write"
+		"prettier:fix": "npx prettier src/**/*.{ts,tsx,html,json,md,js} -c --write",
+		"storybook": "storybook dev -p 6006",
+		"build-storybook": "storybook build"
 	},
 	"eslintConfig": {
 		"extends": [
@@ -93,6 +107,14 @@
 							"ignoreDeclarationSort": true
 						}
 					]
+				}
+			},
+			{
+				"files": [
+					"**/*.stories.*"
+				],
+				"rules": {
+					"import/no-anonymous-default-export": "off"
 				}
 			}
 		]
