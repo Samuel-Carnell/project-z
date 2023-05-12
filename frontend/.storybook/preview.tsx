@@ -1,5 +1,7 @@
-import type { Preview } from "@storybook/react";
+import { Preview } from "@storybook/react";
 import React, { StrictMode } from "react";
+import { ChakraProvider } from "@chakra-ui/react";
+import { theme } from "../src/theme";
 
 const preview: Preview = {
 	parameters: {
@@ -18,7 +20,9 @@ export const decorators = [
 		<StrictMode>
 			<Story />
 		</StrictMode>
-	)
+	),
+	Story => <ChakraProvider theme={theme}>{Story()}</ChakraProvider>,
+	Story => <></>
 ];
 
 export default preview;
