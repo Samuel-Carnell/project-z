@@ -50,7 +50,7 @@
 		"prettier:check": "prettier src/**/*.{ts,tsx,html,json,md,js} -c",
 		"prettier:fix": "npx prettier src/**/*.{ts,tsx,html,json,md,js} -c --write",
 		"storybook": "storybook dev -p 6006",
-		"build-storybook": "storybook build"
+		"storybook:build": "storybook build"
 	},
 	"eslintConfig": {
 		"extends": [

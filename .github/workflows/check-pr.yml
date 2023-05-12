@@ -1,0 +1,56 @@
+name: Frontend Environment
+
+on:
+  pull_request:
+    branches: main
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/frontend-env
+      - name: npm run build
+        working-directory: frontend
+        run: npm run build
+
+  build-storybook:
+    name: Build Storybook
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/frontend-env
+      - name: npm run storybook:build
+        working-directory: frontend
+        run: npm run storybook:build
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/frontend-env
+      - name: npm run lint
+        working-directory: frontend
+        run: npm run lint
+        env:
+          CI: true
+
+  test:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/frontend-env
+      - name: npm run test-coverage
+        working-directory: frontend
+        run: npm run test-coverage
