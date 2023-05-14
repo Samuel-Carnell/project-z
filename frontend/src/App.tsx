@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
-import { Box, Button, chakra, ChakraProvider, Flex, Text } from "@chakra-ui/react";
+import { Box, chakra, ChakraProvider, Flex, Text } from "@chakra-ui/react";
 import { HiOutlineBell, HiOutlineInbox, HiOutlineSquares2X2 } from "react-icons/hi2";
+import { Board } from "./components/board";
 import { theme } from "./theme";
 
 const Window = chakra("div", {
@@ -26,7 +27,7 @@ function Layout({ children }: { children?: ReactNode }) {
 					</Box>
 				</Flex>
 			</Box>
-			<Box background="blackAlpha.200" width={200} boxShadow="md"></Box>
+			{/* <Box background="blackAlpha.200" width={200} boxShadow="md"></Box> */}
 			<Flex flexDirection="column" grow={1}>
 				{children}
 			</Flex>
@@ -45,11 +46,7 @@ function App() {
 								Alexander Flemming
 							</Text>
 						</Box>
-						<Box p={2}>
-							<Button fontWeight={"normal"} colorScheme="blue">
-								New Task
-							</Button>
-						</Box>
+						<Board flex={1} />
 					</Flex>
 				</Layout>
 			</Window>
