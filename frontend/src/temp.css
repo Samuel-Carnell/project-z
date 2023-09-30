@@ -1,0 +1,193 @@
+body {
+	font-size: inherit;
+	font-family: inherit;
+	font-weight: inherit;
+	line-height: inherit;
+	background: rgb(255, 255, 255);
+	color: rgb(40, 42, 48);
+	cursor: default;
+}
+body {
+	/* CSS Variables that may have been missed get put on body */
+	--scrollbar-color: #8f959ccc;
+}
+
+* {
+	box-sizing: border-box;
+	touch-action: pan-x pan-y;
+}
+
+body {
+	height: 100%;
+	margin: 0;
+}
+
+body {
+	margin: 0px;
+	padding: 0px;
+	border: 0px;
+	font-size: inherit;
+	font-family: inherit;
+	font-weight: inherit;
+	line-height: inherit;
+	vertical-align: baseline;
+}
+
+body {
+	line-height: 1;
+}
+
+body {
+	width: 100%;
+	margin: 0px;
+	padding: 0px;
+	-webkit-tap-highlight-color: transparent;
+}
+
+body {
+	font-family: var(--font-regular);
+}
+
+body {
+	line-height: 1.5;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizelegibility;
+	text-size-adjust: 100%;
+}
+
+body {
+	position: fixed;
+}
+
+body {
+	overflow: hidden;
+}
+
+body {
+	user-select: none;
+	cursor: default;
+}
+
+body {
+	--body-color: #ffffff;
+	--pointer: default;
+}
+
+html {
+	--body-color: var(--light-color);
+	--sidebar-color: var(--light-color);
+	background-color: var(--body-color);
+	height: 100%;
+	padding: 0;
+}
+
+html {
+	margin: 0px;
+	padding: 0px;
+	border: 0px;
+	font-size: inherit;
+	font-family: inherit;
+	font-weight: inherit;
+	line-height: inherit;
+	vertical-align: baseline;
+}
+
+html {
+	width: 100%;
+	margin: 0px;
+	padding: 0px;
+	-webkit-tap-highlight-color: transparent;
+}
+
+html {
+	position: fixed;
+}
+
+html {
+	overflow: hidden;
+}
+
+:root {
+	--light-color: #ffffff;
+}
+
+:root {
+	--font-regular: 'Inter UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+		Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+	--speed-highlightFadeIn: 0s;
+	--speed-highlightFadeOut: 0.15s;
+	--font-size-mini: 0.75rem;
+}
+
+button {
+	font-family: var(--font-regular);
+}
+
+button {
+	cursor: var(--pointer);
+}
+
+.bXKHZU {
+	display: inline-flex;
+	-webkit-box-align: center;
+	align-items: center;
+	-webkit-box-pack: center;
+	justify-content: center;
+	white-space: nowrap;
+	flex-shrink: 0;
+	margin: 0px;
+	border-radius: 4px;
+	font-weight: 500;
+	line-height: normal;
+	transition-property: border, background-color, color, opacity;
+	transition-duration: var(--speed-highlightFadeOut);
+	user-select: none;
+	app-region: no-drag;
+	position: relative;
+	border: 1px solid rgb(110, 121, 214);
+	box-shadow: rgba(0, 0, 0, 0.082) 0px 1px 2px;
+	background-color: rgb(110, 121, 214) !important;
+	color: rgb(255, 255, 255);
+	min-width: 28px;
+	height: 28px;
+	padding: 0px 14px;
+	font-size: var(--font-size-mini);
+}
+
+:selection {
+	background: rgba(106, 111, 117, 0.2);
+}
+
+body.layoutScrollbarObtrusive ::-webkit-scrollbar {
+	width: var(--scrollbar-width);
+	height: var(--scrollbar-width);
+}
+
+body.layoutScrollbarObtrusive ::-webkit-scrollbar-thumb {
+	background-color: var(--scrollbar-color);
+	opacity: 0.2;
+	border-radius: var(--scrollbar-width);
+	border: 3px solid transparent;
+	background-clip: content-box;
+}
+
+body.layoutScrollbarObtrusive ::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.bXKHZU:not(:disabled):hover {
+	transition-duration: var(--speed-highlightFadeIn);
+}
+
+.bXKHZU:not(:disabled):hover {
+	background-color: rgb(92, 103, 199);
+}
+
+body.layoutScrollbarObtrusive ::-webkit-scrollbar-thumb:hover {
+	--scrollbar-color: #8f959ccc;
+}
+
+/* These were inline style tags. Uses id+class to override almost everything */
+#style-faDDU.style-faDDU {
+	display: flex;
+}

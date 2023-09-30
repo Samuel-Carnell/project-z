@@ -1,0 +1,16 @@
+{
+  "name": "infrastructure",
+  "main": "index.ts",
+  "devDependencies": {
+    "@types/node": "^18",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@pulumi/docker": "^4.5.1",
+    "@pulumi/kubernetes": "^4.0.0",
+    "@pulumi/kubernetes-ingress-nginx": "^0.0.10",
+    "@pulumi/pulumi": "^3.0.0",
+    "@pulumi/random": "^4.15.1"
+  },
+  "packageManager": "pnpm@8.15.2+sha256.90bb5d6382cb2cb8b8d4959a076b3953d84d1d94121717097bcd41c71344fa14"
+}

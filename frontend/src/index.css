@@ -1,0 +1,6 @@
+@import './components/common/inputs/Editor/extensions/code-block-element.css';
+@import './temp.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;

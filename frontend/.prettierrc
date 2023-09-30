@@ -1,0 +1,10 @@
+{
+	"endOfLine": "lf",
+	"singleQuote": true,
+	"tabWidth": 2,
+	"semi": true,
+	"printWidth": 120,
+	"arrowParens": "always",
+	"useTabs": true,
+	"plugins": ["prettier-plugin-organize-imports", "prettier-plugin-tailwindcss"]
+}
