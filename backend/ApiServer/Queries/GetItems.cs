@@ -52,7 +52,11 @@ public static class GetItemsEndpoint
                          task.StatusId,
                          task.Index,
                          task.Title,
-                         Description = JsonSerializer.Deserialize<object>(task.Description.Value, new JsonSerializerOptions() { })
+                         Description = new
+                         {
+                           task.Description.Version,
+                           Value = JsonSerializer.Deserialize<object>(task.Description.Value, new JsonSerializerOptions() { })
+                         }
                        };
       var statusesQuery = from status in dbContext.Statuses.AsQueryable()
                           select new

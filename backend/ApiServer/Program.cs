@@ -56,4 +56,6 @@ var group = app.MapGroup("/api");
 group.WithGetItemsEndpoint();
 group.WithCreateTaskEndpoint();
 group.WithMoveTaskEndpoint();
+group.WithRenameTaskEndpoint();
+group.WithUpdateTaskDescriptionEndpoint();
 app.Run();

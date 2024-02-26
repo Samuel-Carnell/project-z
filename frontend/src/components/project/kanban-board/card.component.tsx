@@ -57,7 +57,7 @@ const EditableCard = forwardRef(
 				{...attributes}
 				{...listeners}
 				{...props}
-				onClick={() => navigate(`#${task.id}`, { relative: 'path' })}
+				onClick={() => navigate(`#${task.slug}`, { relative: 'path' })}
 			/>
 		);
 	},

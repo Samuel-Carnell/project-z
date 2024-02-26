@@ -18,7 +18,7 @@ public class NewValue<T>
 
   public T Value { get; set; }
 
-  public bool MatchesCurrentVersion(VersionedValue<T> current)
+  public bool MatchesCurrentVersion<P>(VersionedValue<P> current)
   {
     return FromVersion == current.Version;
   }
