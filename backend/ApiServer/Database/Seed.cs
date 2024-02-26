@@ -42,24 +42,5 @@ public static class Seeder
     {
       dbContext.Statuses.InsertMany(Statuses);
     }
-
-    if (dbContext.Tasks.AsQueryable().Count() == 0)
-    {
-
-      var items = new List<Task>();
-      for (var i = 0; i < 1000; i++)
-      {
-        items.Add(new Task()
-        {
-          Id = Guid.NewGuid(),
-          Title = VersionedValue<string>.From("Some Title"),
-          Index = VersionedValue<int>.From(i),
-          StatusId = VersionedValue<Guid>.From(Statuses[0].Id),
-          Description = VersionedValue<string>.From("null")
-        });
-      }
-      dbContext.Tasks.InsertMany(items);
-
-    }
   }
 }

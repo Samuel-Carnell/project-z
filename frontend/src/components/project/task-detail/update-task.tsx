@@ -56,9 +56,12 @@ type Action = {
 };
 
 type Value = {
+	id: string;
 	title: string;
 	description: any;
+	slug: string;
 	statusId: string;
+	innerValue?: any;
 };
 
 function usePersistent<T>(getValue: () => T) {
@@ -87,42 +90,15 @@ function useObservableValue<T>($: Observable<T>, _default: T) {
 
 const defaultValue = {
 	title: '',
-	description: [
-		{
-			type: 'p',
-			children: [
-				{
-					text: '',
-				},
-			],
-		},
-	],
+	description: null,
 	statusId: '',
+	id: '',
+	slug: '',
 };
 
-function useCreateTask(todoStatusId$: Observable<string>) {
-	const config = useConfig();
-
-	const initialValue$ = usePersistent(() =>
-		todoStatusId$.pipe(
-			map((todoStatusId) => ({
-				title: '',
-				description: [
-					{
-						type: 'p',
-						children: [
-							{
-								text: '',
-							},
-						],
-					},
-				],
-				statusId: todoStatusId,
-			})),
-		),
-	);
+function useUpdateTask(task$: Observable<Value>) {
 	const [value$, dispatch] = useInteractive(
-		initialValue$,
+		task$,
 		(task: Value, action: Action) => {
 			return {
 				...task,
@@ -136,12 +112,6 @@ function useCreateTask(todoStatusId$: Observable<string>) {
 
 	return {
 		value: state,
-		createTask: () =>
-			fetch(`${config.apiServer}/api/action/create-task`, {
-				method: 'POST',
-				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify(state),
-			}),
 		updateTaskState: ({ key, value }: Action) => {
 			dispatch({ key, value }, { key, value: state[key] });
 		},
@@ -155,6 +125,7 @@ export type Objs =
 			statusId: { version: string; value: string };
 			index: { version: string; value: number };
 			title: { version: string; value: string };
+			description: { version: unknown; value: string };
 	  }
 	| {
 			type: 'status';
@@ -173,13 +144,34 @@ const createEventSource$ = (apiServer: string) =>
 		});
 
 		return () => source.close();
-	}).pipe(shareReplay(1));
+	}).pipe(
+		shareReplay({
+			refCount: true,
+			bufferSize: 1,
+		}),
+	);
 
-export const CreateTask = ({ className }: { className?: string; projectId: string }) => {
+export const UpdateTask = ({ className, taskSlug }: { className?: string; taskSlug: string }) => {
 	const config = useConfig();
 	const source$ = usePersistent(() => createEventSource$(config.apiServer as string));
 	const taskDescriptionContainerRef = useRef<HTMLDivElement | null>(null);
 	const { pathname } = useLocation();
+	const task$ = source$.pipe(
+		map((objs) =>
+			objs
+				.filter((obj): obj is Extract<Objs, { type: 'task' }> => obj.type === 'task')
+				.map((x) => ({
+					id: x.id,
+					statusId: x.statusId.value,
+					title: x.title.value,
+					description: x.description.value,
+					slug: `MP-${x.index.value}`,
+					innerValue: x,
+				}))
+				.find((x) => x.slug === taskSlug),
+		),
+		filter((x): x is NonNullable<typeof x> => x !== undefined),
+	);
 	const statuses$ = source$.pipe(
 		map((objs) =>
 			objs
@@ -192,18 +184,12 @@ export const CreateTask = ({ className }: { className?: string; projectId: strin
 				})),
 		),
 	);
-	const todoStatusId$ = usePersistent(() =>
-		statuses$.pipe(
-			map((statuses) => statuses.find((x) => x.title.toLowerCase() === 'todo')?.id),
-			filter((x): x is string => x !== undefined),
-		),
-	);
-	const { createTask, updateTaskState, value } = useCreateTask(todoStatusId$);
+	const { updateTaskState, value } = useUpdateTask(task$);
 
 	return (
 		<div className={twMerge('flex min-h-0 flex-col bg-white', className)}>
 			<div className="flex items-center border-b border-[#e6e6e6] px-5 py-1">
-				<div className="py-1 text-[13px] font-medium text-[#6b6f76]">New Task</div>
+				<div className="py-1 text-[13px] font-medium text-[#6b6f76]">{value.slug}</div>
 				<div className="flex-1" />
 				<div className="flex items-center gap-2.5">
 					<QuickAction icon={IconDots} />
@@ -228,16 +214,42 @@ export const CreateTask = ({ className }: { className?: string; projectId: strin
 					<input
 						className="mb-2 w-full cursor-text rounded text-[22px] font-medium outline-none"
 						defaultValue={value.title}
-						onChange={(e) => updateTaskState({ key: 'title', value: e.target.value })}
+						onChange={(e) => {
+							updateTaskState({ key: 'title', value: e.target.value });
+							fetch(`${config.apiServer}/api/action/rename-task`, {
+								method: 'POST',
+								headers: { 'content-type': 'application/json' },
+								body: JSON.stringify({
+									taskId: value.id,
+									title: {
+										fromVersion: value.innerValue.title.version,
+										value: e.target.value,
+									},
+								}),
+							});
+						}}
 						maxLength={60}
 						placeholder="Task Title"
 					/>
-					{value.description !== null && (
+					{value.description != null && (
 						<Editor
 							className="min-h-0"
 							color="rgb(60, 65, 73)"
 							value={value.description as any}
-							onChange={(description: any) => updateTaskState({ key: 'description', value: description })}
+							onChange={(description: any) => {
+								updateTaskState({ key: 'description', value: description });
+								fetch(`${config.apiServer}/api/action/update-task-description`, {
+									method: 'POST',
+									headers: { 'content-type': 'application/json' },
+									body: JSON.stringify({
+										taskId: value.id,
+										description: {
+											fromVersion: value.innerValue.description.version,
+											value: description,
+										},
+									}),
+								});
+							}}
 							container={taskDescriptionContainerRef}
 							placeholder="Add Description..."
 						/>
@@ -248,19 +260,22 @@ export const CreateTask = ({ className }: { className?: string; projectId: strin
 						<span className="w-[90px] text-[12px] font-medium text-[#6b6f76]">Status</span>
 						<StatusField
 							statusId={value.statusId}
-							onChange={(statusId: any) => updateTaskState({ key: 'statusId', value: statusId })}
+							onChange={(statusId: any) => {
+								updateTaskState({ key: 'statusId', value: statusId });
+								fetch(`${config.apiServer}/api/action/move-task`, {
+									method: 'POST',
+									headers: { 'content-type': 'application/json' },
+									body: JSON.stringify({
+										taskId: value.id,
+										statusId: {
+											fromVersion: value.innerValue.statusId.version,
+											value: statusId,
+										},
+									}),
+								});
+							}}
 							statuses$={statuses$}
 						/>
-					</div>
-					<div className="mt-2 flex gap-2">
-						<button
-							onClick={createTask}
-							aria-label="Save issue"
-							className="sc-jrcTuL bXKHZU snipcss-W8AH9 style-faDDU flex-1"
-							id="style-faDDU"
-						>
-							Create Task
-						</button>
 					</div>
 				</div>
 			</div>
