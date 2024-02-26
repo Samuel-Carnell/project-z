@@ -1,4 +1,4 @@
-import { NewTaskDetail, TaskDetail } from 'components/project/task-detail';
+import { CreateTask } from 'components/project/task-detail/create-task';
 import { Route, Routes, useLocation } from 'react-router';
 import ProjectPage from './project/project.page';
 
@@ -9,17 +9,9 @@ export const AppPage = () => {
 	let task;
 	if (taskId === 'new') {
 		task = (
-			<NewTaskDetail
+			<CreateTask
 				className="relative z-20 w-[990px] border-l border-[#e6e6e6] shadow-[0_0_16px_0_#e6e6e6]"
 				projectId="aa27f680-d644-454c-bad4-1db11c0d762c"
-			/>
-		);
-	} else if (taskId) {
-		task = (
-			<TaskDetail
-				key={taskId}
-				className="relative z-20 w-[990px] border-l border-[#e6e6e6] shadow-[0_0_16px_0_#e6e6e6]"
-				taskId={taskId}
 			/>
 		);
 	}

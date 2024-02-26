@@ -1,7 +1,9 @@
 using System;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Database;
+using Events;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -39,37 +41,10 @@ public static class GetItemsEndpoint
 
   public async static System.Threading.Tasks.Task GetTasks(HttpContext context, [FromServices] IDbContextConnector dbContextConnector)
   {
-    using var dbContext = dbContextConnector.ConnectToDatabase();
-    var tasksQuery = from task in dbContext.Tasks.AsQueryable()
-                     select new
-                     {
-                       Type = "task",
-                       task.Id,
-                       task.StatusId,
-                       task.Index,
-                       task.Title,
-                     };
-    var statusesQuery = from status in dbContext.Statuses.AsQueryable()
-                        select new
-                        {
-                          Type = "status",
-                          status.Id,
-                          status.Index,
-                          status.Title,
-                          status.Color
-                        };
-    var result = tasksQuery.ToList().Union<object>(statusesQuery.ToList());
-
-    context.Response.Headers.Add("Content-Type", "text/event-stream");
-    context.Response.Headers.Add("Connection", "keep-alive");
-    await context.Response.WriteAsync($"event: ping\n\n");
-    await context.SendSSEData(result);
-
-
-
-    var unsubscribe = OnItemChanged.Subscribe(async () =>
+    var query = () =>
     {
-      var tasksQuery = from task in dbContext.Tasks.AsQueryable()
+      using var dbContext = dbContextConnector.ConnectToDatabase();
+      var tasksQuery = from task in dbContext.Tasks.AsQueryable().ToList()
                        select new
                        {
                          Type = "task",
@@ -77,6 +52,7 @@ public static class GetItemsEndpoint
                          task.StatusId,
                          task.Index,
                          task.Title,
+                         Description = JsonSerializer.Deserialize<object>(task.Description.Value, new JsonSerializerOptions() { })
                        };
       var statusesQuery = from status in dbContext.Statuses.AsQueryable()
                           select new
@@ -87,8 +63,19 @@ public static class GetItemsEndpoint
                             status.Title,
                             status.Color
                           };
-      var result = tasksQuery.ToList().Union<object>(statusesQuery.ToList());
-      await context.SendSSEData(result);
+      return tasksQuery.ToList().Union<object>(statusesQuery.ToList());
+    };
+
+    context.Response.Headers.Add("Content-Type", "text/event-stream");
+    context.Response.Headers.Add("Connection", "keep-alive");
+    await context.Response.WriteAsync($"event: ping\n\n");
+    await context.SendSSEData(query());
+
+
+
+    var unsubscribe = OnItemsChanged.Subscribe(async () =>
+    {
+      await context.SendSSEData(query());
     });
 
     await context.RequestAborted.WhenCanceled();

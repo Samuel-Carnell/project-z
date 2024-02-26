@@ -1,12 +1,17 @@
 using System;
 
+namespace Events;
+
 public class EventSource
 {
   public static event Action Event;
 
   public static void Dispatch()
   {
-    Event();
+    if (Event is not null)
+    {
+      Event.Invoke();
+    }
   }
 
   public static Action Subscribe(Action Listener)
@@ -16,4 +21,4 @@ public class EventSource
   }
 }
 
-public class OnItemChanged : EventSource { }
+public class OnItemsChanged : EventSource { }
