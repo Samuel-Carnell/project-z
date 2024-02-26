@@ -157,7 +157,7 @@ export type Objs =
 
 const createEventSource$ = (apiServer: string) =>
 	new Observable<Array<Objs>>((observer) => {
-		const source = new EventSource(`${apiServer}/api/query/tasks`);
+		const source = new EventSource(`${apiServer}/api/query/items`);
 		source.addEventListener('data', (event) => {
 			const data = JSON.parse(event.data);
 			observer.next(data);

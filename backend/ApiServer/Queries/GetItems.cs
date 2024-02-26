@@ -26,7 +26,7 @@ public static class GetItemsEndpoint
 
   public static IEndpointConventionBuilder WithGetItemsEndpoint(this IEndpointRouteBuilder endpointRouteBuilder)
   {
-    return endpointRouteBuilder.MapGet("/query/tasks", GetTasks);
+    return endpointRouteBuilder.MapGet("/query/items", GetTasks);
   }
 
   private async static System.Threading.Tasks.Task SendSSEData(this HttpContext context, object data)
