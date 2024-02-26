@@ -54,5 +54,6 @@ app.Use(async (context, next) =>
 });
 var group = app.MapGroup("/api");
 group.WithGetItemsEndpoint();
+group.WithCreateTaskEndpoint();
 group.WithMoveTaskEndpoint();
 app.Run();

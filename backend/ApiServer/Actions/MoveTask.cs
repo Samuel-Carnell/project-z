@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Database;
 using Database.Models;
+using Events;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +27,7 @@ public class NewValue<T>
 public static class MoveTaskAction
 {
 
-  public class RequestBody
+  public class MoveTaskRequestBody
   {
     public Guid TaskId { get; set; }
 
@@ -38,7 +39,7 @@ public static class MoveTaskAction
     return endpointRouteBuilder.MapPost("/action/move-task", MoveTask);
   }
 
-  public static IResult MoveTask([FromBody] RequestBody body, [FromServices] IDbContextConnector dbContextConnector)
+  public static IResult MoveTask([FromBody] MoveTaskRequestBody body, [FromServices] IDbContextConnector dbContextConnector)
   {
     using var dbContext = dbContextConnector.ConnectToDatabase();
     var task = dbContext.Tasks.AsQueryable().Where(x => x.Id == body.TaskId).Single();
@@ -54,7 +55,7 @@ public static class MoveTaskAction
         .Set(task => task.StatusId, VersionedValue<Guid>.From(body.StatusId.Value))
     );
 
-    OnItemChanged.Dispatch();
+    OnItemsChanged.Dispatch();
 
     return TypedResults.Ok();
   }

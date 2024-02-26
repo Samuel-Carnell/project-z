@@ -5,6 +5,7 @@ using Serilog;
 using System.Collections.Generic;
 using MongoDB.Driver;
 using System.Linq;
+using MongoDB.Bson;
 
 namespace Database;
 
@@ -53,7 +54,8 @@ public static class Seeder
           Id = Guid.NewGuid(),
           Title = VersionedValue<string>.From("Some Title"),
           Index = VersionedValue<int>.From(i),
-          StatusId = VersionedValue<Guid>.From(Statuses[0].Id)
+          StatusId = VersionedValue<Guid>.From(Statuses[0].Id),
+          Description = VersionedValue<string>.From("null")
         });
       }
       dbContext.Tasks.InsertMany(items);
