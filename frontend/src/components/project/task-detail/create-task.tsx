@@ -95,7 +95,22 @@ function useCreateTask(todoStatusId$: Observable<string>) {
 	const config = useConfig();
 
 	const initialValue$ = usePersistent(() =>
-		todoStatusId$.pipe(map((todoStatusId) => ({ title: '', description: [], statusId: todoStatusId }))),
+		todoStatusId$.pipe(
+			map((todoStatusId) => ({
+				title: '',
+				description: [
+					{
+						type: 'p',
+						children: [
+							{
+								text: '',
+							},
+						],
+					},
+				],
+				statusId: todoStatusId,
+			})),
+		),
 	);
 	const [value$, dispatch] = useInteractive(
 		initialValue$,
