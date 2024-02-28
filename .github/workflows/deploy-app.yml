@@ -1,0 +1,32 @@
+name: Deploy App
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  pulumi_up:
+    needs:
+      - publish_frontend
+      - publish_backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          standalone: true
+          run_install: false
+          package_json_file: ./infrastructure/package.json
+      - run: cd ./infrastructure && pnpm install
+      - uses: pulumi/actions@v5
+        with:
+          command: up
+          work-dir: ./infrastructure
+          stack-name: Samuel-Carnell/infrastructure/prod
+          comment-on-pr: true
+          message: Deployment of version ${{ github.sha }}
+          config-map: |
+            infrastructure:image-tag:
+              value: ${{ github.sha }}
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
