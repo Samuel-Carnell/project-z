@@ -1,0 +1,427 @@
+body {  
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size:14px;
+  line-height:normal;
+  color:var(--color-text);
+}  
+body { 
+  border: 0; 
+  font-family: inherit; 
+  font-size: 100%; 
+  margin: 0; 
+  padding: 0; 
+  vertical-align: baseline;
+} 
+
+body { 
+  line-height: normal;
+} 
+
+body { 
+  box-sizing: border-box; 
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Helvetica,Arial,sans-serif; 
+  font-size: 14px; 
+  overflow: hidden;
+} 
+
+body { 
+  margin: 0;
+} 
+
+body { 
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Helvetica,Arial,sans-serif; 
+  font-size: 14px; 
+  line-height: normal;
+} 
+
+html { 
+  border: 0; 
+  font-family: inherit; 
+  font-size: 100%; 
+  margin: 0; 
+  padding: 0; 
+  vertical-align: baseline;
+} 
+
+html { 
+  height: 100%;
+} 
+
+html { 
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Helvetica,Arial,sans-serif; 
+  font-size: 14px; 
+  line-height: normal;
+} 
+
+:root { 
+  --color-text: #1e1f21; 
+  --color-text-weak: #6d6e6f; 
+  --color-text-weak-hover: #1e1f21; 
+  --color-icon: #6d6e6f; 
+  --color-border: #edeae9; 
+  --color-border-strong: #cfcbcb; 
+  --color-background-weak: #fff; 
+  --color-background-hover: rgba(55, 23, 23, 0.03); 
+} 
+
+:root { 
+  --color-button-border-subtle: transparent; 
+  --color-button-background-subtle: transparent; 
+} 
+
+:root { 
+  --button-padding-large: 12px; 
+} 
+
+:root { 
+  --color-modal-shroud: rgba(30, 31, 33, 0.75);
+} 
+
+:root { 
+  --color-navigation-body-background: #f9f8f8; 
+} 
+
+.DecorativeModalLayer { 
+  align-items: center; 
+  bottom: 0; 
+  display: flex; 
+  flex-direction: column; 
+  left: 0; 
+  position: fixed; 
+  right: 0; 
+  top: 0;
+} 
+
+.DecorativeModalLayer--zIndexIncluded { 
+  z-index: 900;
+} 
+
+[tabindex="-1"]:focus { 
+  outline: none;
+} 
+
+.Scrollable--vertical { 
+  min-height: 1px; 
+  overflow-y: auto;
+} 
+
+.DecorativeModalLayer-scrollable { 
+  align-items: center; 
+  display: flex; 
+  flex: 1; 
+  flex-direction: column; 
+  width: 100%;
+} 
+
+.DecorativeModalLayer-desktopTopbarBuffer { 
+  background-color: var(--color-modal-shroud); 
+  flex-shrink: 0; 
+  width: 100%;
+} 
+
+.Stack--align-stretch { 
+  align-items: stretch;
+} 
+
+.Stack--direction-column { 
+  flex-direction: column;
+} 
+
+.Stack--display-block { 
+  display: flex;
+} 
+
+.Stack--justify-space-between { 
+  justify-content: space-between;
+} 
+
+.ModalBuffer { 
+  background-color: var(--color-modal-shroud); 
+  flex: 1 1 auto; 
+  width: 100%;
+} 
+
+.ModalBuffer--notResponsive { 
+  min-height: 1px;
+} 
+
+.ModalBuffer .ModalBuffer-topBuffer  { 
+  flex: 0 1000 80px; 
+  height: 80px; 
+  min-height: 40px;
+} 
+
+.Stack--direction-row { 
+  flex-direction: row;
+} 
+
+.Stack--justify-center { 
+  justify-content: center;
+} 
+
+.ModalBuffer-content { 
+  flex: 0 1 auto; 
+  min-height: 1px; 
+  width: 100%;
+} 
+
+.ModalBuffer .ModalBuffer-bottomBuffer  { 
+  flex: 0 1000 80px; 
+  height: 80px; 
+  min-height: 40px;
+} 
+
+.ModalPaneWithBuffer-pane { 
+  background: var(--color-background-weak); 
+  border-radius: 4px; 
+  display: flex; 
+  flex-direction: column; 
+  min-height: 1px; 
+  overflow: hidden;
+} 
+
+.ModalPaneWithBuffer-pane.ModalPaneWithBuffer-pane--isNewRoundedCorner { 
+  border-radius: 12px;
+} 
+
+.Modal { 
+  background: var(--color-background-weak); 
+  display: flex; 
+  flex-direction: column; 
+  min-height: 1px;
+} 
+
+.ModalWrapper.ModalWrapper--sizeSmall { 
+  width: 560px;
+} 
+
+.ModalWrapper-childContainer { 
+  display: contents; 
+  height: 100%; 
+  overflow: auto;
+} 
+
+.Stack--align-center { 
+  align-items: center;
+} 
+
+.Modal-header { 
+  flex: 0 0 auto;
+} 
+
+.ModalHeader { 
+  border-bottom: 1px solid var(--color-border); 
+  box-sizing: border-box; 
+  height: 64px;
+} 
+
+.ModalHeader.ModalHeader--sizeSmall { 
+  padding: 0 24px;
+} 
+
+.Scrollable--withCompositingLayer { 
+  will-change: transform;
+} 
+
+.ModalContent { 
+  box-sizing: border-box;
+} 
+
+.ModalContent.ModalContent--sizeSmall { 
+  padding: 24px;
+} 
+
+h2 { 
+  border: 0; 
+  font-family: inherit; 
+  font-size: 100%; 
+  margin: 0; 
+  padding: 0; 
+  vertical-align: baseline;
+} 
+
+h2 { 
+  margin: 0;
+} 
+
+.TypographyPresentation { 
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Helvetica,Arial,sans-serif;
+} 
+
+.TypographyPresentation--colorDefault { 
+  color: var(--color-text);
+} 
+
+.TypographyPresentation--fontWeightMedium { 
+  font-weight: 500;
+} 
+
+.TypographyPresentation--overflowTruncate { 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+  white-space: nowrap;
+} 
+
+.TypographyPresentation--h4.TypographyPresentation { 
+  font-size: 20px; 
+  line-height: 28px;
+} 
+
+.ThemeableIconButtonPresentation { 
+  align-items: center; 
+  border: 1px solid; 
+  border-radius: 50%; 
+  box-sizing: border-box; 
+  display: inline-flex; 
+  justify-content: center; 
+  transition-duration: 200ms; 
+  transition-property: background,border,fill;
+} 
+
+.ModalHeader-closeButton { 
+  flex-grow: 0; 
+  margin: 0 0 0 16px;
+} 
+
+.ThemeableIconButtonPresentation.ThemeableIconButtonPresentation--isEnabled { 
+  cursor: pointer;
+} 
+
+.SubtleIconButton.ThemeableIconButtonPresentation { 
+  border-radius: 6px;
+} 
+
+.ThemeableIconButtonPresentation.ThemeableIconButtonPresentation--medium.ThemeableIconButtonPresentation { 
+  height: 28px; 
+  min-height: 28px; 
+  min-width: 28px; 
+  width: 28px;
+} 
+
+.SubtleIconButton.SubtleIconButton--standardTheme.ThemeableIconButtonPresentation { 
+  background: var(--color-button-background-subtle); 
+  border-color: var(--color-button-background-subtle); 
+  fill: var(--color-text-weak);
+} 
+
+.SubtleIconButton.SubtleIconButton--standardTheme.ThemeableIconButtonPresentation--isEnabled:hover { 
+  background: var(--color-background-hover); 
+  border-color: var(--color-button-border-subtle); 
+  fill: var(--color-text-weak-hover);
+} 
+
+.Icon { 
+  flex: 0 0 auto; 
+  height: 16px; 
+  width: 16px;
+} 
+
+svg:not(:root) { 
+  overflow: hidden;
+} 
+
+.ProjectInformationDialogContent-row { 
+  -moz-column-gap: 16px; 
+  column-gap: 16px; 
+  display: flex; 
+  margin-bottom: 16px;
+} 
+
+.FormRowStructure { 
+  display: flex; 
+  flex: 1 1 auto; 
+  min-width: 1px;
+} 
+
+.FormRowStructure--labelPlacementTop { 
+  flex-direction: column;
+} 
+
+.ProjectInformationDialogContent-nameField { 
+  flex: 1 0 0;
+} 
+
+.FormRowStructure-label { 
+  box-sizing: border-box; 
+  display: inline-flex; 
+  flex: 0 0 auto;
+} 
+
+.FormRowStructure--labelPlacementTop .FormRowStructure-label  { 
+  margin-bottom: 8px;
+} 
+
+.FormRowStructure-contents { 
+  display: flex; 
+  flex: 1 1 auto; 
+  flex-direction: column; 
+  min-width: 1px;
+} 
+
+label { 
+  border: 0; 
+  font-family: inherit; 
+  font-size: 100%; 
+  margin: 0; 
+  padding: 0; 
+  vertical-align: baseline;
+} 
+
+.LabelPresentation { 
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Helvetica,Arial,sans-serif; 
+  font-size: 12px; 
+  line-height: 18px; 
+  align-items: center; 
+  color: var(--color-text-weak); 
+  display: flex; 
+  font-weight: 500;
+} 
+
+input { 
+  border: 0; 
+  font-family: inherit; 
+  font-size: 100%; 
+  margin: 0; 
+  padding: 0; 
+  vertical-align: baseline;
+} 
+
+input { 
+  color: inherit; 
+  font: inherit; 
+  margin: 0;
+} 
+
+input { 
+  line-height: normal;
+} 
+
+.SizedTextInput { 
+  box-sizing: border-box;
+} 
+
+.TextInput--medium { 
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Helvetica,Arial,sans-serif; 
+  font-size: 14px; 
+  font-weight: 400; 
+  line-height: 22px; 
+  background-color: var(--color-background-weak); 
+  border-width: 1px; 
+  border-style: solid; 
+  border-color: var(--color-border-strong); 
+  border-radius: 6px; 
+  padding: 0 var(--button-padding-large); 
+  box-sizing: border-box;
+} 
+
+.ProjectInformationDialogContent-textInput { 
+  display: block;
+} 
+
+.SizedTextInput.SizedTextInput--medium { 
+  height: 36px; 
+  padding-bottom: 6px; 
+  padding-top: 6px;
+} 
+
+

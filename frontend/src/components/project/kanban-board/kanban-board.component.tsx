@@ -1,4 +1,5 @@
 import { DndContext, DragOverlay, PointerSensor, useSensor } from '@dnd-kit/core';
+import { Observable } from 'rxjs';
 import { twMerge } from 'tailwind-merge';
 import { Card } from './card.component';
 import { Column } from './column.component';
@@ -18,8 +19,8 @@ import { useKanban } from './use-kanban';
 // 	});
 // };
 
-export const KanbanBoard = ({ className }: { className?: string }) => {
-	const { columns, dragStatus, dispatch, setDragStatus, getRawTaskById } = useKanban();
+export const KanbanBoard = ({ className, projectId$ }: { className?: string; projectId$: Observable<string> }) => {
+	const { columns, dragStatus, dispatch, setDragStatus, getRawTaskById } = useKanban(projectId$);
 
 	const sensor = useSensor(PointerSensor, {
 		activationConstraint: {

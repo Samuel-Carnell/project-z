@@ -19,7 +19,7 @@ public static class RenameTaskAction
   {
     public Guid TaskId { get; set; }
 
-    public NewValue<string> Title { get; set; }
+    public required NewValue<string> Title { get; set; }
   }
 
   public static RouteHandlerBuilder WithRenameTaskEndpoint(this IEndpointRouteBuilder endpointRouteBuilder)

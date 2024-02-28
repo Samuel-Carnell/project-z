@@ -58,4 +58,5 @@ group.WithCreateTaskEndpoint();
 group.WithMoveTaskEndpoint();
 group.WithRenameTaskEndpoint();
 group.WithUpdateTaskDescriptionEndpoint();
+group.WithCreateProjectEndpoint();
 app.Run();

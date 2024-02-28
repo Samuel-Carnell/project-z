@@ -1,7 +1,8 @@
-import { useConfig } from 'config';
+import { Objs, useEventSource } from 'eventsource';
 import { useInteractive } from 'hooks/use-interactive';
-import { useCallback, useRef, useState, useSyncExternalStore } from 'react';
-import { BehaviorSubject, Observable, combineLatest, debounceTime, map, shareReplay, switchMap } from 'rxjs';
+import { usePersistent } from 'hooks/use-persistent';
+import { useCallback, useRef, useSyncExternalStore } from 'react';
+import { BehaviorSubject, Observable, combineLatest, debounceTime, map, switchMap } from 'rxjs';
 
 export type Task = {
 	index: number;
@@ -28,10 +29,6 @@ type Action =
 			at: number;
 	  };
 
-function usePersistent<T>(getValue: () => T) {
-	return useState(getValue)[0];
-}
-
 function useObservableValue<T>($: Observable<T>, _default: T) {
 	const valueRef = useRef(_default);
 	const subscribe = useCallback(
@@ -52,49 +49,28 @@ function useObservableValue<T>($: Observable<T>, _default: T) {
 	);
 }
 
-export type Objs =
-	| {
-			type: 'task';
-			id: string;
-			statusId: { version: string; value: string };
-			index: { version: string; value: number };
-			title: { version: string; value: string };
-	  }
-	| {
-			type: 'status';
-			id: string;
-			index: { version: string; value: number };
-			title: { version: string; value: string };
-			color: { version: string; value: string };
-	  };
-
-const createEventSource$ = (apiServer: string) =>
-	new Observable<Array<Objs>>((observer) => {
-		const source = new EventSource(`${apiServer}/api/query/items`);
-		source.addEventListener('data', (event) => {
-			const data = JSON.parse(event.data);
-			observer.next(data);
-		});
-
-		return () => source.close();
-	}).pipe(shareReplay(1));
-
-export function useKanban() {
-	const config = useConfig();
-	const eventSource$ = usePersistent(() => createEventSource$(config.apiServer as string));
+export function useKanban(projectId$: Observable<string>) {
+	const eventSource$ = useEventSource();
 	const dragStatus$ = usePersistent(() => new BehaviorSubject<{ overId?: string; task: Task } | null>(null));
 
 	const statuses$ = usePersistent(() =>
-		eventSource$.pipe(
-			map((objects) => {
-				return objects
-					.filter((obj): obj is Extract<Objs, { type: 'status' }> => obj.type === 'status')
-					.map((obj) => ({
-						id: obj.id,
-						title: obj.title.value,
-						color: obj.color.value,
-						index: obj.index.value,
-					}));
+		projectId$.pipe(
+			switchMap((projectId) => {
+				return eventSource$.pipe(
+					map((objects) => {
+						return objects
+							.filter(
+								(obj): obj is Extract<Objs, { type: 'status' }> =>
+									obj.type === 'status' && obj.projectId.value === projectId,
+							)
+							.map((obj) => ({
+								id: obj.id,
+								title: obj.title.value,
+								color: obj.color.value,
+								index: obj.index.value,
+							}));
+					}),
+				);
 			}),
 		),
 	);

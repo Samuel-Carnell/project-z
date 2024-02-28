@@ -16,7 +16,7 @@ public class NewValue<T>
 {
   public Guid FromVersion { get; set; }
 
-  public T Value { get; set; }
+  public required T Value { get; set; }
 
   public bool MatchesCurrentVersion<P>(VersionedValue<P> current)
   {
@@ -31,7 +31,7 @@ public static class MoveTaskAction
   {
     public Guid TaskId { get; set; }
 
-    public NewValue<Guid> StatusId { get; set; }
+    public required NewValue<Guid> StatusId { get; set; }
   }
 
   public static RouteHandlerBuilder WithMoveTaskEndpoint(this IEndpointRouteBuilder endpointRouteBuilder)
