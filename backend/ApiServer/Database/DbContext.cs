@@ -24,6 +24,8 @@ public class DbContext : IDisposable
     _connection = connection;
   }
 
+  public IMongoCollection<Project> Projects => _connection.GetDatabase("default").GetCollection<Project>("project");
+
   public IMongoCollection<Task> Tasks => _connection.GetDatabase("default").GetCollection<Task>("task");
 
   public IMongoCollection<Status> Statuses => _connection.GetDatabase("default").GetCollection<Status>("status");
@@ -42,7 +44,7 @@ public class DbContext : IDisposable
     public Connector(IConfiguration configuration)
     {
       var connectionString = configuration.GetSection("mongodb").GetValue<string>("connection_string");
-      if (configuration is null)
+      if (connectionString is null)
       {
         throw new Exception("No connection string");
       }
@@ -55,7 +57,6 @@ public class DbContext : IDisposable
       var connection = new MongoClient(_connectionString);
       var dbContext = new DbContext(connection);
       Log.Information($"Connecting to Database with connection string {_connectionString}");
-      Seeder.Seed(dbContext);
       return dbContext;
     }
   }

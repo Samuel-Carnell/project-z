@@ -9,11 +9,12 @@ import {
 import { Editor } from 'components/common/inputs/Editor';
 import { Select } from 'components/common/inputs/select/select.component';
 import { useConfig } from 'config';
+import { Objs, useEventSource } from 'eventsource';
 import { useInteractive } from 'hooks/use-interactive';
-import { ComponentType, useCallback, useRef, useState, useSyncExternalStore } from 'react';
+import { ComponentType, useCallback, useRef, useSyncExternalStore } from 'react';
 import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Observable, filter, map, shareReplay } from 'rxjs';
+import { Observable, filter, map } from 'rxjs';
 import { twMerge } from 'tailwind-merge';
 
 const QuickAction = ({ icon: Icon }: { icon: ComponentType<TablerIconsProps> }) => (
@@ -63,10 +64,6 @@ type Value = {
 	statusId: string;
 	innerValue?: any;
 };
-
-function usePersistent<T>(getValue: () => T) {
-	return useState(getValue)[0];
-}
 
 function useObservableValue<T>($: Observable<T>, _default: T) {
 	const valueRef = useRef(_default);
@@ -118,42 +115,9 @@ function useUpdateTask(task$: Observable<Value>) {
 	};
 }
 
-export type Objs =
-	| {
-			type: 'task';
-			id: string;
-			statusId: { version: string; value: string };
-			index: { version: string; value: number };
-			title: { version: string; value: string };
-			description: { version: unknown; value: string };
-	  }
-	| {
-			type: 'status';
-			id: string;
-			index: { version: string; value: number };
-			title: { version: string; value: string };
-			color: { version: string; value: string };
-	  };
-
-const createEventSource$ = (apiServer: string) =>
-	new Observable<Array<Objs>>((observer) => {
-		const source = new EventSource(`${apiServer}/api/query/items`);
-		source.addEventListener('data', (event) => {
-			const data = JSON.parse(event.data);
-			observer.next(data);
-		});
-
-		return () => source.close();
-	}).pipe(
-		shareReplay({
-			refCount: true,
-			bufferSize: 1,
-		}),
-	);
-
 export const UpdateTask = ({ className, taskSlug }: { className?: string; taskSlug: string }) => {
 	const config = useConfig();
-	const source$ = usePersistent(() => createEventSource$(config.apiServer as string));
+	const source$ = useEventSource();
 	const taskDescriptionContainerRef = useRef<HTMLDivElement | null>(null);
 	const { pathname } = useLocation();
 	const task$ = source$.pipe(

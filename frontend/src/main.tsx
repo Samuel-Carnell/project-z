@@ -1,5 +1,6 @@
 import App from 'App';
 import { RuntimeConfig } from 'config';
+import { EventSourceProvider } from 'eventsource';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 
@@ -12,7 +13,9 @@ function main() {
 	const root = createRoot(rootElement);
 	root.render(
 		<RuntimeConfig>
-			<App />
+			<EventSourceProvider>
+				<App />
+			</EventSourceProvider>
 		</RuntimeConfig>,
 	);
 }

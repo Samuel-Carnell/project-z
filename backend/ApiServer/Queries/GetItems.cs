@@ -44,6 +44,14 @@ public static class GetItemsEndpoint
     var query = () =>
     {
       using var dbContext = dbContextConnector.ConnectToDatabase();
+      var projectsQuery = from project in dbContext.Projects.AsQueryable()
+                          select new
+                          {
+                            Type = "project",
+                            project.Id,
+                            project.Title,
+                            project.UrlId
+                          };
       var tasksQuery = from task in dbContext.Tasks.AsQueryable().ToList()
                        select new
                        {
@@ -63,11 +71,14 @@ public static class GetItemsEndpoint
                           {
                             Type = "status",
                             status.Id,
+                            status.ProjectId,
                             status.Index,
                             status.Title,
-                            status.Color
+                            status.Color,
                           };
-      return tasksQuery.ToList().Union<object>(statusesQuery.ToList());
+      return tasksQuery.ToList()
+        .Union<object>(statusesQuery.ToList())
+        .Union(projectsQuery.ToList());
     };
 
     context.Response.Headers.Add("Content-Type", "text/event-stream");

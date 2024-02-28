@@ -20,7 +20,7 @@ public static class UpdateTaskDescriptionAction
   {
     public Guid TaskId { get; set; }
 
-    public NewValue<object> Description { get; set; }
+    public required NewValue<object> Description { get; set; }
   }
 
   public static RouteHandlerBuilder WithUpdateTaskDescriptionEndpoint(this IEndpointRouteBuilder endpointRouteBuilder)

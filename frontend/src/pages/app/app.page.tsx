@@ -1,7 +1,6 @@
 import { CreateTask } from 'components/project/task-detail/create-task';
 import { UpdateTask } from 'components/project/task-detail/update-task';
-import { Route, Routes, useLocation } from 'react-router';
-import ProjectPage from './project/project.page';
+import { Outlet, useLocation } from 'react-router';
 
 export const AppPage = () => {
 	const { hash } = useLocation();
@@ -27,10 +26,7 @@ export const AppPage = () => {
 
 	return (
 		<div className="flex h-[100vh] w-[100vw]">
-			{/* <FpsView /> */}
-			<Routes>
-				<Route path=":projectId/*" element={<ProjectPage className="min-w-0 flex-1" />} />
-			</Routes>
+			<Outlet />
 			{task}
 		</div>
 	);
