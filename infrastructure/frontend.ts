@@ -2,30 +2,51 @@ import * as k8s from "@pulumi/kubernetes";
 import * as docker from "@pulumi/docker";
 import { jsonStringify } from "@pulumi/pulumi";
 
-// docker.io/samuelcarnell
+type DockerImage = {
+  buildOnDeploy: boolean;
+  registry: string;
+  repo?: string;
+  tag?: string;
+};
+
+const frontendImageName = ({
+  buildOnDeploy,
+  registry,
+  repo = "frontend",
+  tag,
+}: DockerImage) => {
+  if (buildOnDeploy) {
+    const image = new docker.Image(`frontend-image`, {
+      imageName: `${registry}/${repo}`,
+      build: {
+        args: {
+          platform: "linux/amd64",
+        },
+        context: "../frontend",
+        platform: "linux/amd64",
+      },
+    });
+
+    return image.imageName;
+  }
+
+  if (tag === undefined) {
+    throw new Error("image tag is required when buildOnDeploy is false");
+  }
+
+  return `${registry}/${repo}:${tag}`;
+};
 
 export function createFrontendComponent({
   provider,
-  appName,
-  imageRepo,
+  image,
   apiServer,
 }: {
   provider: k8s.Provider;
-  appName: string;
-  imageRepo: string;
+  image: DockerImage;
   apiServer: string;
 }) {
-  const imageName = `${appName}-frontend-image-${Date.now()}`;
-  const frontendImage = new docker.Image(imageName, {
-    imageName: `${imageRepo}/samuel-carnell:${imageName}`,
-    build: {
-      args: {
-        platform: "linux/amd64",
-      },
-      context: "../frontend",
-      platform: "linux/amd64",
-    },
-  });
+  const imageName = frontendImageName(image);
 
   const configMap = new k8s.core.v1.ConfigMap(
     "frontend-config-map",
@@ -43,10 +64,10 @@ export function createFrontendComponent({
   );
 
   const frontendPort = 3000;
-  const serviceName = `${appName}-frontend-service`;
-  const deploymentName = `${appName}-frontend-deployment`;
+  const serviceName = `app-frontend-service`;
+  const deploymentName = `app-frontend-deployment`;
 
-  const frontendLabel = { app: appName, component: "frontend" };
+  const frontendLabel = { component: "frontend" };
   const frontendDeployment = new k8s.apps.v1.Deployment(
     deploymentName,
     {
@@ -62,7 +83,7 @@ export function createFrontendComponent({
             containers: [
               {
                 name: "frontend",
-                image: frontendImage.imageName,
+                image: imageName,
                 ports: [{ containerPort: frontendPort }],
                 volumeMounts: [
                   {
