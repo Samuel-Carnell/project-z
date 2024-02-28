@@ -1,0 +1,68 @@
+name: Publish Docker images and Preview Deployment
+
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  publish_frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        with:
+          username: ${{ secrets.DOCKER_HUB_USER }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+        with:
+          context: ./frontend
+          push: true
+          tags: samuelcarnell/2do-frontend:${{ github.sha }}
+
+  publish_backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        with:
+          username: ${{ secrets.DOCKER_HUB_USER }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+        with:
+          context: ./backend
+          push: true
+          tags: samuelcarnell/2do-backend:${{ github.sha }}
+  pulumi_preview:
+    needs:
+      - publish_frontend
+      - publish_backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          standalone: true
+          run_install: false
+          package_json_file: ./infrastructure/package.json
+      - run: cd ./infrastructure && pnpm install
+      - uses: pulumi/actions@v5
+        with:
+          command: preview
+          work-dir: ./infrastructure
+          stack-name: Samuel-Carnell/infrastructure/prod
+          comment-on-pr: true
+          config-map: |
+            infrastructure:image-tag:
+              value: ${{ github.sha }}
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}

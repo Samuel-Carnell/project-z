@@ -5,11 +5,9 @@ import { RandomPassword } from "@pulumi/random";
 
 export function createDatabaseComponent({
   provider,
-  appName,
   storageClass,
 }: {
   provider: k8s.Provider;
-  appName: string;
   storageClass: string;
 }) {
   const rootCredentials = {
@@ -38,8 +36,8 @@ export function createDatabaseComponent({
     { protect: true, dependsOn: [rootCredentials.password], provider }
   );
 
-  const statefulSetName = "mongodb-stateful-set";
-  const serviceName = "mongodb-service";
+  const statefulSetName = "app-mongodb-stateful-set";
+  const serviceName = "app-mongodb-service";
   const containerPort = 27017;
   const statefulSet = new k8s.apps.v1.StatefulSet(
     statefulSetName,
@@ -110,8 +108,8 @@ export function createDatabaseComponent({
     { provider }
   );
 
-  const mongoExpressDeploymentName = `${appName}-mongo-express-deployment`;
-  const mongoExpressLabel = { app: appName, component: "mongo-express" };
+  const mongoExpressDeploymentName = `mongo-express-deployment`;
+  const mongoExpressLabel = { component: "mongo-express" };
   const mongoExpressPort = 8081;
   const meCredentials = {
     user: "admin",
@@ -119,10 +117,7 @@ export function createDatabaseComponent({
       length: 20,
       special: true,
       overrideSpecial: "!#$%&*()-_=+[]{}<>:?",
-    }).result.apply((x) => {
-      console.log(x);
-      return x;
-    }),
+    }).result,
   };
   const mongoExpressDeployment = new k8s.apps.v1.Deployment(
     mongoExpressDeploymentName,
