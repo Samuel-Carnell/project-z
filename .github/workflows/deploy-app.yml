@@ -6,9 +6,6 @@ on:
       - main
 jobs:
   pulumi_up:
-    needs:
-      - publish_frontend
-      - publish_backend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
