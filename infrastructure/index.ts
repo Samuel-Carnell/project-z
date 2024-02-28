@@ -18,7 +18,6 @@ const dbComponent = createDatabaseComponent({
 const frontendComponent = createFrontendComponent({
   provider,
   image: {
-    buildOnDeploy: config.requireBoolean("build-images-on-deploy"),
     registry: config.require("image-registry"),
     repo: config.get("frontend-image-repo"),
     tag: config.get("image-tag"),
@@ -28,7 +27,6 @@ const frontendComponent = createFrontendComponent({
 const backendComponent = createBackendComponent({
   provider,
   image: {
-    buildOnDeploy: config.requireBoolean("build-images-on-deploy"),
     registry: config.require("image-registry"),
     repo: config.get("backend-image-repo"),
     tag: config.get("image-tag"),
