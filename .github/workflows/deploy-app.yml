@@ -43,6 +43,7 @@ jobs:
           push: true
           tags: samuelcarnell/2do-backend:${{ github.sha }}
   pulumi_up:
+    needs: [publish_backend, publish_frontend]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
