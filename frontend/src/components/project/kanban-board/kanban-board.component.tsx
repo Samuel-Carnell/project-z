@@ -1,26 +1,29 @@
 import { DndContext, DragOverlay, PointerSensor, useSensor } from '@dnd-kit/core';
+import { useConfig } from 'config';
+import { Objs } from 'eventsource';
 import { Observable } from 'rxjs';
 import { twMerge } from 'tailwind-merge';
 import { Card } from './card.component';
 import { Column } from './column.component';
 import { useKanban } from './use-kanban';
 
-// const moveTask = async (rawTask: Extract<Objs, { type: 'task' }>, newStatus: string) => {
-// 	await fetch('http://localhost:5000/action/move-task', {
-// 		method: 'POST',
-// 		headers: { 'content-type': 'application/json' },
-// 		body: JSON.stringify({
-// 			taskId: rawTask.id,
-// 			statusId: {
-// 				fromVersion: rawTask.statusId.version,
-// 				value: newStatus,
-// 			},
-// 		}),
-// 	});
-// };
-
 export const KanbanBoard = ({ className, projectId$ }: { className?: string; projectId$: Observable<string> }) => {
+	const config = useConfig();
 	const { columns, dragStatus, dispatch, setDragStatus, getRawTaskById } = useKanban(projectId$);
+
+	const moveTask = async (rawTask: Extract<Objs, { type: 'task' }>, newStatus: string) => {
+		await fetch(`${config.apiServer}/api/action/move-task`, {
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify({
+				taskId: rawTask.id,
+				statusId: {
+					fromVersion: rawTask.statusId.version,
+					value: newStatus,
+				},
+			}),
+		});
+	};
 
 	const sensor = useSensor(PointerSensor, {
 		activationConstraint: {
@@ -59,7 +62,7 @@ export const KanbanBoard = ({ className, projectId$ }: { className?: string; pro
 					);
 					const rawTask = getRawTaskById(task.id);
 					if (rawTask !== undefined) {
-						//moveTask(rawTask, overId).catch(() => revertChange());
+						moveTask(rawTask, overId);
 					}
 
 					setDragStatus(null);
