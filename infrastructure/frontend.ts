@@ -3,28 +3,34 @@ import * as docker from "@pulumi/docker";
 import { jsonStringify } from "@pulumi/pulumi";
 
 type DockerImage = {
+  buildOnDeploy: boolean;
   registry: string;
   repo?: string;
   tag?: string;
 };
 
 const frontendImageName = ({
+  buildOnDeploy,
   registry,
   repo = "frontend",
   tag,
 }: DockerImage) => {
-  const image = new docker.Image(`frontend-image`, {
-    imageName: `${registry}/${repo}:${tag}`,
-    build: {
-      args: {
+  if (buildOnDeploy) {
+    const image = new docker.Image(`frontend-image`, {
+      imageName: `${registry}/${repo}:${tag}`,
+      build: {
+        args: {
+          platform: "linux/amd64",
+        },
+        context: "../frontend",
         platform: "linux/amd64",
       },
-      context: "../frontend",
-      platform: "linux/amd64",
-    },
-  });
+    });
 
-  return image.imageName;
+    return image.imageName;
+  }
+
+  return `${registry}/${repo}:${tag}`;
 };
 
 export function createFrontendComponent({
