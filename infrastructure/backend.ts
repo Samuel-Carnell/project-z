@@ -3,18 +3,44 @@ import * as docker from "@pulumi/docker";
 import { Output, jsonStringify } from "@pulumi/pulumi";
 import { RandomPassword } from "@pulumi/random";
 
-// docker.io/samuelcarnell
-// "mongodb://root:password@mongodb-service:27017/"
+type DockerImage = {
+  buildOnDeploy: boolean;
+  registry: string;
+  repo?: string;
+  tag?: string;
+};
+
+const backendImageName = ({
+  buildOnDeploy,
+  registry,
+  repo = "backend",
+  tag,
+}: DockerImage) => {
+  if (buildOnDeploy) {
+    const image = new docker.Image(`backend-image`, {
+      imageName: `${registry}/${repo}:${tag}`,
+      build: {
+        args: {
+          platform: "linux/amd64",
+        },
+        context: "../backend",
+        platform: "linux/amd64",
+      },
+    });
+
+    return image.imageName;
+  }
+
+  return `${registry}/${repo}:${tag}`;
+};
 
 export function createBackendComponent({
   provider,
-  appName,
-  imageRepo,
+  image,
   database,
 }: {
   provider: k8s.Provider;
-  appName: string;
-  imageRepo: string;
+  image: DockerImage;
   database: {
     serviceName: Output<string>;
     port: number;
@@ -24,17 +50,7 @@ export function createBackendComponent({
     };
   };
 }) {
-  const imageName = `${appName}-backend-image-${Date.now()}`;
-  const backendImage = new docker.Image(imageName, {
-    imageName: `${imageRepo}/samuel-carnell:${imageName}`,
-    build: {
-      args: {
-        platform: "linux/amd64",
-      },
-      context: "../backend",
-      platform: "linux/amd64",
-    },
-  });
+  const imageName = backendImageName(image);
 
   const configMap = new k8s.core.v1.ConfigMap(
     "backend-config-map",
@@ -59,10 +75,10 @@ export function createBackendComponent({
   );
 
   const port = 5100;
-  const serviceName = `${appName}-backend-service`;
-  const deploymentName = `${appName}-backend-deployment`;
+  const serviceName = `app-backend-service`;
+  const deploymentName = `app-backend-deployment`;
 
-  const label = { app: appName, component: "backend" };
+  const label = { component: "backend" };
 
   const backendDeployment = new k8s.apps.v1.Deployment(
     deploymentName,
@@ -79,7 +95,7 @@ export function createBackendComponent({
             containers: [
               {
                 name: "backend",
-                image: backendImage.imageName,
+                image: imageName,
                 ports: [{ containerPort: port }],
                 volumeMounts: [
                   {
