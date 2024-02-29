@@ -18,7 +18,7 @@ const backendImageName = ({
 }: DockerImage) => {
   if (buildOnDeploy) {
     const image = new docker.Image(`backend-image`, {
-      imageName: `${registry}/${repo}:${tag}`,
+      imageName: `${registry}/${repo}:${Date.now()}`,
       build: {
         args: {
           platform: "linux/amd64",

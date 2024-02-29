@@ -12,7 +12,7 @@ import { useConfig } from 'config';
 import { Objs, useEventSource } from 'eventsource';
 import { useInteractive } from 'hooks/use-interactive';
 import { ComponentType, useCallback, useRef, useState, useSyncExternalStore } from 'react';
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Observable, filter, map } from 'rxjs';
 import { twMerge } from 'tailwind-merge';
@@ -103,6 +103,8 @@ const defaultValue = {
 
 function useCreateTask(todoStatusId$: Observable<string>) {
 	const config = useConfig();
+	const navigate = useNavigate();
+	const currentLocation = useLocation();
 
 	const initialValue$ = usePersistent(() =>
 		todoStatusId$.pipe(
@@ -137,12 +139,14 @@ function useCreateTask(todoStatusId$: Observable<string>) {
 
 	return {
 		value: state,
-		createTask: () =>
-			fetch(`${config.apiServer}/api/action/create-task`, {
+		createTask: async () => {
+			await fetch(`${config.apiServer}/api/action/create-task`, {
 				method: 'POST',
 				headers: { 'content-type': 'application/json' },
 				body: JSON.stringify(state),
-			}),
+			});
+			navigate(currentLocation.pathname);
+		},
 		updateTaskState: ({ key, value }: Action) => {
 			dispatch({ key, value }, { key, value: state[key] });
 		},
