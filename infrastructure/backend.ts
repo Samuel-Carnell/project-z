@@ -4,24 +4,34 @@ import { Output, jsonStringify } from "@pulumi/pulumi";
 import { RandomPassword } from "@pulumi/random";
 
 type DockerImage = {
+  buildOnDeploy: boolean;
   registry: string;
   repo?: string;
   tag?: string;
 };
 
-const backendImageName = ({ registry, repo = "backend", tag }: DockerImage) => {
-  const image = new docker.Image(`backend-image`, {
-    imageName: `${registry}/${repo}:${tag}`,
-    build: {
-      args: {
+const backendImageName = ({
+  buildOnDeploy,
+  registry,
+  repo = "backend",
+  tag,
+}: DockerImage) => {
+  if (buildOnDeploy) {
+    const image = new docker.Image(`backend-image`, {
+      imageName: `${registry}/${repo}:${tag}`,
+      build: {
+        args: {
+          platform: "linux/amd64",
+        },
+        context: "../backend",
         platform: "linux/amd64",
       },
-      context: "../backend",
-      platform: "linux/amd64",
-    },
-  });
+    });
 
-  return image.imageName;
+    return image.imageName;
+  }
+
+  return `${registry}/${repo}:${tag}`;
 };
 
 export function createBackendComponent({
