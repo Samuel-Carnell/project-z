@@ -1,11 +1,10 @@
 import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
-import * as nginx from "@pulumi/kubernetes-ingress-nginx";
 import { createFrontendComponent } from "./frontend";
 import { createBackendComponent } from "./backend";
 import { createDatabaseComponent } from "./db";
+import * as yaml from "yaml";
 
-const appName = "myapp";
 const config = new pulumi.Config();
 const provider = new k8s.Provider("kubernetes-client", {
   kubeconfig: config.require("k8s-config"),
@@ -13,20 +12,25 @@ const provider = new k8s.Provider("kubernetes-client", {
 });
 
 const dbComponent = createDatabaseComponent({
-  appName,
   provider,
   storageClass: config.require("storage-class"),
 });
 const frontendComponent = createFrontendComponent({
-  appName,
   provider,
-  imageRepo: config.require("image-repo"),
+  image: {
+    registry: config.require("image-registry"),
+    repo: config.get("frontend-image-repo"),
+    tag: config.get("image-tag"),
+  },
   apiServer: config.require("host"),
 });
 const backendComponent = createBackendComponent({
-  appName,
   provider,
-  imageRepo: config.require("image-repo"),
+  image: {
+    registry: config.require("image-registry"),
+    repo: config.get("backend-image-repo"),
+    tag: config.get("image-tag"),
+  },
   database: {
     credentials: dbComponent.mongoDatabase.credentials,
     port: dbComponent.mongoDatabase.port,
@@ -64,7 +68,7 @@ if (config.requireBoolean("include-ingress-controller")) {
   );
 }
 
-const ingressName = `${appName}-ingress`;
+const ingressName = `app-ingress`;
 const ingress = new k8s.networking.v1.Ingress(
   ingressName,
   {
@@ -116,3 +120,6 @@ const ingress = new k8s.networking.v1.Ingress(
 );
 
 export const host = config.require("host");
+const k8sConfig = yaml.parse(config.require("k8s-config"));
+export const k8sContext = k8sConfig["current-context"];
+export const imageTag = config.get("image-tag") ?? "";
