@@ -2,22 +2,19 @@ import * as k8s from "@pulumi/kubernetes";
 import * as docker from "@pulumi/docker";
 import { jsonStringify } from "@pulumi/pulumi";
 
-// docker.io/samuelcarnell
+type DockerImage = {
+  registry: string;
+  repo?: string;
+  tag?: string;
+};
 
-export function createFrontendComponent({
-  provider,
-  appName,
-  imageRepo,
-  apiServer,
-}: {
-  provider: k8s.Provider;
-  appName: string;
-  imageRepo: string;
-  apiServer: string;
-}) {
-  const imageName = `${appName}-frontend-image-${Date.now()}`;
-  const frontendImage = new docker.Image(imageName, {
-    imageName: `${imageRepo}/samuel-carnell:${imageName}`,
+const frontendImageName = ({
+  registry,
+  repo = "frontend",
+  tag,
+}: DockerImage) => {
+  const image = new docker.Image(`frontend-image`, {
+    imageName: `${registry}/${repo}:${tag}`,
     build: {
       args: {
         platform: "linux/amd64",
@@ -26,6 +23,20 @@ export function createFrontendComponent({
       platform: "linux/amd64",
     },
   });
+
+  return image.imageName;
+};
+
+export function createFrontendComponent({
+  provider,
+  image,
+  apiServer,
+}: {
+  provider: k8s.Provider;
+  image: DockerImage;
+  apiServer: string;
+}) {
+  const imageName = frontendImageName(image);
 
   const configMap = new k8s.core.v1.ConfigMap(
     "frontend-config-map",
@@ -43,10 +54,10 @@ export function createFrontendComponent({
   );
 
   const frontendPort = 3000;
-  const serviceName = `${appName}-frontend-service`;
-  const deploymentName = `${appName}-frontend-deployment`;
+  const serviceName = `app-frontend-service`;
+  const deploymentName = `app-frontend-deployment`;
 
-  const frontendLabel = { app: appName, component: "frontend" };
+  const frontendLabel = { component: "frontend" };
   const frontendDeployment = new k8s.apps.v1.Deployment(
     deploymentName,
     {
@@ -62,7 +73,7 @@ export function createFrontendComponent({
             containers: [
               {
                 name: "frontend",
-                image: frontendImage.imageName,
+                image: imageName,
                 ports: [{ containerPort: frontendPort }],
                 volumeMounts: [
                   {
