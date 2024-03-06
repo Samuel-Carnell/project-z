@@ -26,92 +26,45 @@ export const CreateProjectModal = ({ onCloseModal }: { onCloseModal: () => void 
 	};
 	return (
 		<div
-			className="absolute z-[999] grid h-full w-full items-center justify-center"
+			className="absolute z-[999] grid h-full w-full place-items-center"
 			style={{ background: 'rgba(30, 31, 33, 0.75)' }}
 		>
-			<div
-				className="ModalWrapper ModalWrapper--sizeSmall Modal rounded-md "
-				role="dialog"
-				aria-modal="true"
-				aria-labelledby="Modal-headinglui_736"
-			>
-				<div className="ModalWrapper-childContainer">
-					<div className="ModalHeader ModalHeader--sizeSmall Modal-header Stack Stack--align-center Stack--direction-row Stack--display-block Stack--justify-space-between !h-auto">
-						<h2
-							className="TypographyPresentation TypographyPresentation--colorDefault TypographyPresentation--overflowTruncate TypographyPresentation--h4 TypographyPresentation--fontWeightMedium !py-4"
-							id="Modal-headinglui_736"
-						>
-							Project&nbsp;details
-						</h2>
-						<div
-							role="button"
-							aria-label="Close this dialog"
-							className="ThemeableIconButtonPresentation--isEnabled ThemeableIconButtonPresentation ThemeableIconButtonPresentation--medium SubtleIconButton--standardTheme SubtleIconButton ModalHeader-closeButton"
-							aria-disabled="false"
-							onClick={onCloseModal}
-						>
-							<svg className="Icon XIcon" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-								<path d="M18.1,16L27,7.1c0.6-0.6,0.6-1.5,0-2.1s-1.5-0.6-2.1,0L16,13.9l-8.9-9C6.5,4.3,5.6,4.3,5,4.9S4.4,6.4,5,7l8.9,8.9L5,24.8c-0.6,0.6-0.6,1.5,0,2.1c0.3,0.3,0.7,0.4,1.1,0.4s0.8-0.1,1.1-0.4l8.9-8.9l8.9,8.9c0.3,0.3,0.7,0.4,1.1,0.4s0.8-0.1,1.1-0.4c0.6-0.6,0.6-1.5,0-2.1L18.1,16z"></path>
-							</svg>
-						</div>
-					</div>
-					<div
-						className="Scrollable--withCompositingLayer Scrollable Scrollable--vertical ModalContent ModalContent--sizeSmall !p-5 !pb-7"
-						role="presentation"
+			<div className="w-[560px] rounded-md bg-white" role="dialog" aria-modal="true">
+				<div className="flex justify-between border-b border-[#edeae9] px-6 py-4">
+					<h2 className="text-[20px]">Project&nbsp;details</h2>
+					<button
+						className="grid h-[28px] w-[28px] place-items-center rounded-[6px] fill-[#6d6e6f] transition-all duration-[0.2s] hover:bg-[#171717] hover:bg-opacity-[0.03] hover:fill-[#1e1f21] "
+						aria-label="Close this dialog"
+						aria-disabled="false"
+						onClick={onCloseModal}
 					>
-						<div className="ProjectInhtmlFormationDialogContent">
-							<div
-								className="ProjectInhtmlFormationDialogContent-row "
-								data-dashlane-rid="11ac46aacb33f6ec"
-								data-htmlForm-type="other"
-							>
-								<div className="htmlFormRowStructure--labelPlacementTop htmlFormRowStructure ProjectInhtmlFormationDialogContent-nameField flex-1">
-									<div className="htmlFormRowStructure-label mb-1.5">
-										<label className="LabelBase LabelPresentation" htmlFor="lui_740">
-											Name
-										</label>
-									</div>
-									<div className="htmlFormRowStructure-contents" data-dashlane-rid="2e7eade57a4aa88b">
-										<input
-											ref={nameRef}
-											className="TextInputBase SizedTextInput SizedTextInput--medium TextInput TextInput--medium ProjectInhtmlFormationDialogContent-textInput w-[350px]"
-											type="text"
-											id="lui_740"
-											data-dashlane-rid="7d4c27ca58e18202"
-											data-htmlForm-type="other"
-										/>
-									</div>
-								</div>
-								<div className="htmlFormRowStructure--labelPlacementTop htmlFormRowStructure ProjectInhtmlFormationDialogContent-nameField mt-2 flex-1">
-									<div className="htmlFormRowStructure-label mb-1.5">
-										<label className="LabelBase LabelPresentation" htmlFor="lui_740">
-											URL ID
-										</label>
-									</div>
-									<div
-										className="htmlFormRowStructure-contents"
-										data-dashlane-rid="2e7eade57a4aa88b"
-										data-htmlForm-type="other"
-									>
-										<input
-											ref={urlIdRef}
-											className="TextInputBase SizedTextInput SizedTextInput--medium TextInput TextInput--medium ProjectInhtmlFormationDialogContent-textInput w-[350px]"
-											type="text"
-											id="lui_740"
-											data-dashlane-rid="d3c085589c5c6e3a"
-											data-htmlForm-type="other"
-										/>
-									</div>
-								</div>
-							</div>
-						</div>
+						<svg className="Icon XIcon" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+							<path d="M18.1,16L27,7.1c0.6-0.6,0.6-1.5,0-2.1s-1.5-0.6-2.1,0L16,13.9l-8.9-9C6.5,4.3,5.6,4.3,5,4.9S4.4,6.4,5,7l8.9,8.9L5,24.8c-0.6,0.6-0.6,1.5,0,2.1c0.3,0.3,0.7,0.4,1.1,0.4s0.8-0.1,1.1-0.4l8.9-8.9l8.9,8.9c0.3,0.3,0.7,0.4,1.1,0.4s0.8-0.1,1.1-0.4c0.6-0.6,0.6-1.5,0-2.1L18.1,16z"></path>
+						</svg>
+					</button>
+				</div>
+				<div className="space-y-2 border-b border-[#edeae9] p-5 pb-7">
+					<div>
+						<label className="mb-[4px] block text-[12px] text-[#6d6e6f]">Name</label>
+						<input
+							ref={nameRef}
+							className="block h-[36px] w-[300px] rounded-[6px] border border-solid border-[#cfcbcb] px-[12px] py-[6px] text-[14px] outline-none"
+						/>
 					</div>
-					<div style={{ borderTop: '1px solid var(--color-border)' }} className="flex p-2">
-						<div className="flex-1" />
-						<button
-							onClick={() => createProject()}
-							style={
-								parse(`
+					<div>
+						<label className="mb-[4px] block text-[12px] text-[#6d6e6f]">URL ID</label>
+						<input
+							ref={urlIdRef}
+							className="block h-[36px] w-[300px] rounded-[6px] border border-solid border-[#cfcbcb] px-[12px] py-[6px] text-[14px] outline-none"
+						/>
+					</div>
+				</div>
+				<div className="flex p-2">
+					<div className="flex-1" />
+					<button
+						onClick={() => createProject()}
+						style={
+							parse(`
           display: inline-flex;
   -moz-box-align: center;
   align-items: center;
@@ -135,11 +88,10 @@ export const CreateProjectModal = ({ onCloseModal }: { onCloseModal: () => void 
   height: 28px;
   padding: 0px 14px;
   font-size: 12px;`) as any
-							}
-						>
-							Create Project
-						</button>
-					</div>
+						}
+					>
+						Create Project
+					</button>
 				</div>
 			</div>
 		</div>
