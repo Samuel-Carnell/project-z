@@ -62,7 +62,7 @@ export function createBackendComponent({
       data: {
         "appsettings.json": jsonStringify({
           mongodb: {
-            connection_string: database.serviceName.apply((serviceName) =>
+            connectionString: database.serviceName.apply((serviceName) =>
               database.credentials.password.result.apply(
                 (password) =>
                   `mongodb://${database.credentials.user}:${password}@${serviceName}:${database.port}`
@@ -70,9 +70,9 @@ export function createBackendComponent({
             ),
           },
           oauth: {
-            'github': {
-              'clientId': oathProviders.github.clientId,
-              'clientSecret': oathProviders.github.secret
+            github: {
+              clientId: oathProviders.github.clientId,
+              clientSecret: oathProviders.github.secret
             }
 
           }

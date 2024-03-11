@@ -14,6 +14,7 @@ const provider = new k8s.Provider("kubernetes-client", {
 const dbComponent = createDatabaseComponent({
   provider,
   storageClass: config.require("storage-class"),
+  mePassword: config.require("me-password"),
 });
 const frontendComponent = createFrontendComponent({
   provider,

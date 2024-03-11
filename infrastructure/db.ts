@@ -6,9 +6,11 @@ import { RandomPassword } from "@pulumi/random";
 export function createDatabaseComponent({
   provider,
   storageClass,
+  mePassword,
 }: {
   provider: k8s.Provider;
   storageClass: string;
+  mePassword: string;
 }) {
   const rootCredentials = {
     user: "root",
@@ -113,11 +115,7 @@ export function createDatabaseComponent({
   const mongoExpressPort = 8081;
   const meCredentials = {
     user: "admin",
-    password: new RandomPassword("me-password", {
-      length: 20,
-      special: true,
-      overrideSpecial: "!#$%&*()-_=+[]{}<>:?",
-    }).result,
+    password: mePassword,
   };
   const mongoExpressDeployment = new k8s.apps.v1.Deployment(
     mongoExpressDeploymentName,

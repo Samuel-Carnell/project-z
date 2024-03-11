@@ -57,7 +57,7 @@ export function createFrontendComponent({
           oauth: {
             'github': {
               'clientId': oathProviders.github.clientId,
-              'scopes': oathProviders.github.scopes.join(' ')
+              'scope': oathProviders.github.scopes.join(' ')
             }
           }
         }),
