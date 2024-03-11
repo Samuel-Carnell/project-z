@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Auth;
 using Database;
 using Database.Models;
 using Events;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Serilog;
 
 namespace ActionEndpoints;
 
@@ -54,12 +56,23 @@ public static class CreateProjectAction
     }
   };
 
-  public static IResult CreateProject([FromBody] CreateProjectRequestBody body, [FromServices] IDbContextConnector dbContextConnector)
+  public static IResult CreateProject(
+    [FromBody] CreateProjectRequestBody body,
+    [FromServices] IDbContextConnector dbContextConnector,
+    HttpContext httpContext)
   {
-    using var dbContext = dbContextConnector.ConnectToDatabase();
+    var dbContext = dbContextConnector.ConnectToDatabase();
+    var user = httpContext.GetUserInfo();
+    Log.Information($"User is null is {user is null}");
+    if (user is null)
+    {
+      return TypedResults.Unauthorized();
+    }
+
     dbContext.Projects.InsertOne(new Project()
     {
       Id = body.Id,
+      Owner = user.Id,
       Title = VersionedValue<string>.From(body.Title),
       UrlId = VersionedValue<string>.From(body.UrlId)
     });

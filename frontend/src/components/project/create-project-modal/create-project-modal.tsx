@@ -15,6 +15,7 @@ export const CreateProjectModal = ({ onCloseModal }: { onCloseModal: () => void 
 		fetch(`${config.apiServer}/api/action/create-project`, {
 			method: 'POST',
 			headers: { 'content-type': 'application/json' },
+			credentials: 'include',
 			body: JSON.stringify({
 				id: uuid(),
 				title: nameRef.current?.value,

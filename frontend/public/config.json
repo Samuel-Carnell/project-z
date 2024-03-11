@@ -1,3 +1,9 @@
 {
-	"apiServer": "http://localhost:5001"
+	"apiServer": "http://localhost:5001",
+	"oauth": {
+		"github": {
+			"clientId": "48d191339b86000aef45",
+			"scopes": "read:user user:email"
+		}
+	}
 }

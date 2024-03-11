@@ -2,6 +2,7 @@ import * as k8s from "@pulumi/kubernetes";
 import * as docker from "@pulumi/docker";
 import { Output, jsonStringify } from "@pulumi/pulumi";
 import { RandomPassword } from "@pulumi/random";
+import { oathProviders } from "./oauthProviders";
 
 type DockerImage = {
   buildOnDeploy: boolean;
@@ -68,6 +69,13 @@ export function createBackendComponent({
               )
             ),
           },
+          oauth: {
+            'github': {
+              'clientId': oathProviders.github.clientId,
+              'clientSecret': oathProviders.github.secret
+            }
+
+          }
         }),
       },
     },

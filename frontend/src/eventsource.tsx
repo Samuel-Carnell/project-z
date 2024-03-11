@@ -1,7 +1,7 @@
 import { useConfig } from 'config';
 import { usePersistent } from 'hooks/use-persistent';
 import { ReactNode, createContext, useContext } from 'react';
-import { Observable, shareReplay, tap } from 'rxjs';
+import { Observable, map, shareReplay, tap } from 'rxjs';
 
 export type Objs =
 	| {
@@ -29,7 +29,7 @@ export type Objs =
 
 const createEventSource$ = (apiServer: string) =>
 	new Observable<Array<Objs>>((observer) => {
-		const source = new EventSource(`${apiServer}/api/query/items`);
+		const source = new EventSource(`${apiServer}/api/query/items`, { withCredentials: true });
 		source.addEventListener('data', (event) => {
 			const data = JSON.parse(event.data);
 			observer.next(data);
@@ -65,4 +65,8 @@ export const useEventSource = () => {
 
 export function filterByType<T extends Objs['type']>(objs: Array<Objs>, type: T) {
 	return objs.filter((x): x is Extract<Objs, { type: T }> => x.type === type);
+}
+
+export function objectType<T extends Objs['type']>(type: T) {
+	return (source$: Observable<Array<Objs>>) => source$.pipe(map((x) => filterByType(x, type)));
 }

@@ -30,7 +30,7 @@ public static class UpdateTaskDescriptionAction
 
   public static IResult UpdateTaskDescription([FromBody] UpdateTaskDescriptionRequestBody body, [FromServices] IDbContextConnector dbContextConnector)
   {
-    using var dbContext = dbContextConnector.ConnectToDatabase();
+    var dbContext = dbContextConnector.ConnectToDatabase();
     var task = dbContext.Tasks.AsQueryable().Where(x => x.Id == body.TaskId).Single();
 
     if (!body.Description.MatchesCurrentVersion(task.Description))

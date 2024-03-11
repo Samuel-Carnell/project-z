@@ -1,7 +1,7 @@
 import { ReactNode, createContext, useContext } from 'react';
 import { suspend } from 'suspend-react';
 
-type Config = { [key: string]: unknown };
+type Config = { [key: string]: any };
 
 const configContext = createContext<Config | null>(null);
 

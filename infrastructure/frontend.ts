@@ -1,6 +1,7 @@
 import * as k8s from "@pulumi/kubernetes";
 import * as docker from "@pulumi/docker";
 import { jsonStringify } from "@pulumi/pulumi";
+import { oathProviders } from './oauthProviders'
 
 type DockerImage = {
   buildOnDeploy: boolean;
@@ -53,6 +54,12 @@ export function createFrontendComponent({
       data: {
         "config.json": jsonStringify({
           apiServer,
+          oauth: {
+            'github': {
+              'clientId': oathProviders.github.clientId,
+              'scopes': oathProviders.github.scopes.join(' ')
+            }
+          }
         }),
       },
     },

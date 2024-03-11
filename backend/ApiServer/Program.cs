@@ -7,6 +7,7 @@ using Serilog.Events;
 using QueryEndpoints;
 using ActionEndpoints;
 using Database;
+using Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateBootstrapLogger();
@@ -29,22 +30,28 @@ builder.Host.UseSerilog((context, services, configuration) =>
     .WriteTo.Conditional(x => !x.Properties.ContainsKey("RequestId"), writeTo => writeTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}"));
 });
 
-// Some code change
-builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IDbContextConnector, DbContext.Connector>();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
+builder.Services.AddOAuthProviders(builder.Configuration);
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("mypolicy", x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+    options.AddPolicy("mypolicy",
+        x => x.WithOrigins("http://localhost", "http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+    );
+    options.DefaultPolicyName = "mypolicy";
 });
-
-
 
 var app = builder.Build();
 app.UseCors("mypolicy");
 app.UseSwagger();
 app.UseSwaggerUI();
+app.UseSession();
 app.Use(async (context, next) =>
 {
     using (LogContext.PushProperty("RequestId", context.TraceIdentifier))
@@ -52,11 +59,14 @@ app.Use(async (context, next) =>
         await next();
     }
 });
+
 var group = app.MapGroup("/api");
+group.WithGetSessionEndpoint();
 group.WithGetItemsEndpoint();
 group.WithCreateTaskEndpoint();
 group.WithMoveTaskEndpoint();
 group.WithRenameTaskEndpoint();
 group.WithUpdateTaskDescriptionEndpoint();
 group.WithCreateProjectEndpoint();
+group.WithSignInEndpoint();
 app.Run();

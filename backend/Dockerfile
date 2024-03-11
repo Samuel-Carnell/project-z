@@ -4,7 +4,10 @@ COPY ./ApiServer .
 RUN dotnet publish -o ./output --runtime linux-x64 --self-contained
 
 FROM debian:bullseye-slim AS app-env
-RUN apt-get update && apt-get install libicu-dev -y
+RUN apt-get update \
+  && apt-get install libicu-dev -y \
+  && apt-get install -y --no-install-recommends ca-certificates \
+  && update-ca-certificates
 WORKDIR /app
 COPY --from=build-env /app/output .
 ENV ASPNETCORE_URLS=http://*:5100

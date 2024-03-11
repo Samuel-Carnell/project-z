@@ -9,7 +9,7 @@ import {
 import { Editor } from 'components/common/inputs/Editor';
 import { Select } from 'components/common/inputs/select/select.component';
 import { useConfig } from 'config';
-import { Objs, useEventSource } from 'eventsource';
+import { objectType, useEventSource } from 'eventsource';
 import { useInteractive } from 'hooks/use-interactive';
 import { ComponentType, useCallback, useRef, useSyncExternalStore } from 'react';
 import { useLocation } from 'react-router';
@@ -121,9 +121,9 @@ export const UpdateTask = ({ className, taskSlug }: { className?: string; taskSl
 	const taskDescriptionContainerRef = useRef<HTMLDivElement | null>(null);
 	const { pathname } = useLocation();
 	const task$ = source$.pipe(
+		objectType('task'),
 		map((objs) =>
 			objs
-				.filter((obj): obj is Extract<Objs, { type: 'task' }> => obj.type === 'task')
 				.map((x) => ({
 					id: x.id,
 					statusId: x.statusId.value,
@@ -137,15 +137,14 @@ export const UpdateTask = ({ className, taskSlug }: { className?: string; taskSl
 		filter((x): x is NonNullable<typeof x> => x !== undefined),
 	);
 	const statuses$ = source$.pipe(
+		objectType('status'),
 		map((objs) =>
-			objs
-				.filter((obj): obj is Extract<Objs, { type: 'status' }> => obj.type === 'status')
-				.map((x) => ({
-					id: x.id,
-					index: x.index.value,
-					color: x.color.value,
-					title: x.title.value,
-				})),
+			objs.map((x) => ({
+				id: x.id,
+				index: x.index.value,
+				color: x.color.value,
+				title: x.title.value,
+			})),
 		),
 	);
 	const { updateTaskState, value } = useUpdateTask(task$);

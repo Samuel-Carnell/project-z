@@ -41,7 +41,7 @@ public static class MoveTaskAction
 
   public static IResult MoveTask([FromBody] MoveTaskRequestBody body, [FromServices] IDbContextConnector dbContextConnector)
   {
-    using var dbContext = dbContextConnector.ConnectToDatabase();
+    var dbContext = dbContextConnector.ConnectToDatabase();
     var task = dbContext.Tasks.AsQueryable().Where(x => x.Id == body.TaskId).Single();
 
     if (!body.StatusId.MatchesCurrentVersion(task.StatusId))

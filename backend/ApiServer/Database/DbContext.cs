@@ -15,7 +15,7 @@ public interface IDbContextConnector
   public DbContext ConnectToDatabase();
 }
 
-public class DbContext : IDisposable
+public class DbContext
 {
   private readonly MongoClient _connection;
 
@@ -30,10 +30,7 @@ public class DbContext : IDisposable
 
   public IMongoCollection<Status> Statuses => _connection.GetDatabase("default").GetCollection<Status>("status");
 
-  public void Dispose()
-  {
-  }
-
+  public IMongoCollection<UserInfo> Users => _connection.GetDatabase("default").GetCollection<UserInfo>("user");
 
 
   public class Connector : IDbContextConnector
@@ -43,7 +40,7 @@ public class DbContext : IDisposable
 
     public Connector(IConfiguration configuration)
     {
-      var connectionString = configuration.GetSection("mongodb").GetValue<string>("connection_string");
+      var connectionString = configuration.GetSection("mongodb").GetValue<string>("connectionString");
       if (connectionString is null)
       {
         throw new Exception("No connection string");

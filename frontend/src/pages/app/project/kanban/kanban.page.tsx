@@ -1,5 +1,5 @@
 import { KanbanBoard } from 'components/project/kanban-board';
-import { Objs, useEventSource } from 'eventsource';
+import { objectType, useEventSource } from 'eventsource';
 import { usePersistent } from 'hooks/use-persistent';
 import { useParams } from 'react-router';
 import { filter, map } from 'rxjs';
@@ -15,11 +15,8 @@ export const KanbanPage = ({ className }: { className?: string }) => {
 	const source$ = useEventSource();
 	const projectId$ = usePersistent(() =>
 		source$.pipe(
-			map((obj) => {
-				return obj.find(
-					(x): x is Extract<Objs, { type: 'project' }> => x.type === 'project' && x.urlId.value === projectId,
-				)?.id;
-			}),
+			objectType('project'),
+			map((obj) => obj.find((x) => x.urlId.value === projectId)?.id),
 			filter((x): x is string => x !== undefined),
 		),
 	);
