@@ -9,12 +9,12 @@ import {
 import { Editor } from 'components/common/inputs/Editor';
 import { Select } from 'components/common/inputs/select/select.component';
 import { useConfig } from 'config';
-import { Objs, useEventSource } from 'eventsource';
+import { objectType, useEventSource } from 'eventsource';
 import { useInteractive } from 'hooks/use-interactive';
 import { ComponentType, useCallback, useRef, useState, useSyncExternalStore } from 'react';
-import { useLocation, useNavigate } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Observable, filter, map } from 'rxjs';
+import { Observable, filter, map, switchMap } from 'rxjs';
 import { twMerge } from 'tailwind-merge';
 
 const QuickAction = ({ icon: Icon }: { icon: ComponentType<TablerIconsProps> }) => (
@@ -153,21 +153,36 @@ function useCreateTask(todoStatusId$: Observable<string>) {
 	};
 }
 
-export const CreateTask = ({ className }: { className?: string; projectId: string }) => {
+export const CreateTask = ({ className }: { className?: string }) => {
+	const { projectId } = useParams();
 	const source$ = useEventSource();
+	const projectId$ = usePersistent(() =>
+		source$.pipe(
+			objectType('project'),
+			map((obj) => {
+				return obj.find((x) => x.urlId.value === projectId)?.id;
+			}),
+			filter((x): x is string => x !== undefined),
+		),
+	);
 	const taskDescriptionContainerRef = useRef<HTMLDivElement | null>(null);
 	const { pathname } = useLocation();
-	const statuses$ = source$.pipe(
-		map((objs) =>
-			objs
-				.filter((obj): obj is Extract<Objs, { type: 'status' }> => obj.type === 'status')
-				.map((x) => ({
-					id: x.id,
-					index: x.index.value,
-					color: x.color.value,
-					title: x.title.value,
-				})),
-		),
+	const statuses$ = projectId$.pipe(
+		switchMap((projectId) => {
+			return source$.pipe(
+				objectType('status'),
+				map((objs) =>
+					objs
+						.filter((x) => x.projectId.value === projectId)
+						.map((x) => ({
+							id: x.id,
+							index: x.index.value,
+							color: x.color.value,
+							title: x.title.value,
+						})),
+				),
+			);
+		}),
 	);
 	const todoStatusId$ = usePersistent(() =>
 		statuses$.pipe(

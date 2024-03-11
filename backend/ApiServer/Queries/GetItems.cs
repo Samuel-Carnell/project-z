@@ -1,9 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Auth;
 using Database;
 using Events;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -41,10 +44,18 @@ public static class GetItemsEndpoint
 
   public async static System.Threading.Tasks.Task GetTasks(HttpContext context, [FromServices] IDbContextConnector dbContextConnector)
   {
+    var user = context.GetUserInfo();
+    if (user is null)
+    {
+      context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+      return;
+    }
+
     var query = () =>
     {
-      using var dbContext = dbContextConnector.ConnectToDatabase();
+      var dbContext = dbContextConnector.ConnectToDatabase();
       var projectsQuery = from project in dbContext.Projects.AsQueryable()
+                          where project.Owner == user.Id
                           select new
                           {
                             Type = "project",
@@ -52,7 +63,21 @@ public static class GetItemsEndpoint
                             project.Title,
                             project.UrlId
                           };
+      var projects = projectsQuery.ToList();
+      var statusesQuery = from status in dbContext.Statuses.AsQueryable()
+                          where projects.Select(project => project.Id).Contains(status.ProjectId.Value)
+                          select new
+                          {
+                            Type = "status",
+                            status.Id,
+                            status.ProjectId,
+                            status.Index,
+                            status.Title,
+                            status.Color,
+                          };
+      var statuses = statusesQuery.ToList();
       var tasksQuery = from task in dbContext.Tasks.AsQueryable().ToList()
+                       where statuses.Select(status => status.Id).Contains(task.StatusId.Value)
                        select new
                        {
                          Type = "task",
@@ -66,19 +91,10 @@ public static class GetItemsEndpoint
                            Value = JsonSerializer.Deserialize<object>(task.Description.Value, new JsonSerializerOptions() { })
                          }
                        };
-      var statusesQuery = from status in dbContext.Statuses.AsQueryable()
-                          select new
-                          {
-                            Type = "status",
-                            status.Id,
-                            status.ProjectId,
-                            status.Index,
-                            status.Title,
-                            status.Color,
-                          };
-      return tasksQuery.ToList()
-        .Union<object>(statusesQuery.ToList())
-        .Union(projectsQuery.ToList());
+      var tasks = tasksQuery.ToList();
+      return projects.Cast<object>()
+        .Union(statuses)
+        .Union(tasks);
     };
 
     context.Response.Headers.Add("Content-Type", "text/event-stream");

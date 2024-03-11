@@ -29,7 +29,7 @@ public static class RenameTaskAction
 
   public static IResult RenameTask([FromBody] RenameTaskRequestBody body, [FromServices] IDbContextConnector dbContextConnector)
   {
-    using var dbContext = dbContextConnector.ConnectToDatabase();
+    var dbContext = dbContextConnector.ConnectToDatabase();
     var task = dbContext.Tasks.AsQueryable().Where(x => x.Id == body.TaskId).Single();
 
     if (!body.Title.MatchesCurrentVersion(task.Title))

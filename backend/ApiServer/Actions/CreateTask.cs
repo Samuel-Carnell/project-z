@@ -35,7 +35,7 @@ public static class CreateTaskAction
 
   public static IResult CreateTask([FromBody] CreateTaskRequestBody body, [FromServices] IDbContextConnector dbContextConnector)
   {
-    using var dbContext = dbContextConnector.ConnectToDatabase();
+    var dbContext = dbContextConnector.ConnectToDatabase();
 
     var status = dbContext.Statuses.AsQueryable().SingleOrDefault(x => x.Id == body.StatusId);
     if (status is null)

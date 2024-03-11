@@ -6,6 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AspNet.Security.OAuth.GitHub" Version="7.0.0" />
+    <PackageReference Include="ByteDev.FormUrlEncoded" Version="1.1.0" />
     <PackageReference Include="linq2db" Version="5.3.2" />
     <PackageReference Include="linq2db.PostgreSQL" Version="5.3.2" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.10" />
